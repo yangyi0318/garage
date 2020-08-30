@@ -484,6 +484,10 @@ class RL2(MetaRLAlgorithm, abc.ABC):
             k: np.concatenate([b.agent_infos[k] for b in episode_list])
             for k in episode_list[0].agent_infos.keys()
         }
+        episode_infos = {
+            k: np.concatenate([b.episode_infos[k] for b in episode_list])
+            for k in episode_list[0].episode_infos.keys()
+        }
         actions = np.concatenate([
             self._env_spec.action_space.flatten_n(ep.actions)
             for ep in episode_list
@@ -498,6 +502,7 @@ class RL2(MetaRLAlgorithm, abc.ABC):
             rewards=np.concatenate([ep.rewards for ep in episode_list]),
             env_infos=env_infos,
             agent_infos=agent_infos,
+            episode_infos=episode_infos,
             step_types=np.concatenate([ep.step_types for ep in episode_list]),
             lengths=np.asarray([sum([ep.lengths[0] for ep in episode_list])]))
 
