@@ -21,7 +21,7 @@ from garage.envs.wrappers.resize import Resize
 from garage.envs.wrappers.stack_frames import StackFrames
 from garage.experiment.deterministic import set_seed
 from garage.np.exploration_policies import EpsilonGreedyPolicy
-from garage.replay_buffer import PathBuffer
+from garage.replay_buffer import PERReplayBuffer
 from garage.sampler import FragmentWorker, LocalSampler
 from garage.torch import set_gpu_mode
 from garage.torch.algos import DQN
@@ -38,6 +38,8 @@ hyperparams = dict(n_epochs=500,
                    n_train_steps=125,
                    target_update_freq=2,
                    buffer_batch_size=32,
+                   per_beta_init=0.4,
+                   per_alpha=0.6,
                    max_epsilon=1.0,
                    min_epsilon=0.01,
                    decay_ratio=0.1,
@@ -93,7 +95,7 @@ def main(env=None,
 
 
 # pylint: disable=unused-argument
-@wrap_experiment(snapshot_mode='gap_overwrite', snapshot_gap=30)
+@wrap_experiment(snapshot_mode='none')
 def dqn_atari(ctxt=None,
               env=None,
               seed=24,
@@ -139,8 +141,12 @@ def dqn_atari(ctxt=None,
     steps_per_epoch = hyperparams['steps_per_epoch']
     sampler_batch_size = hyperparams['sampler_batch_size']
     num_timesteps = n_epochs * steps_per_epoch * sampler_batch_size
-    replay_buffer = PathBuffer(
-        capacity_in_transitions=hyperparams['buffer_size'])
+
+    replay_buffer = PERReplayBuffer(hyperparams['buffer_size'],
+                                    num_timesteps,
+                                    env.spec,
+                                    alpha=hyperparams['per_alpha'],
+                                    beta_init=hyperparams['per_beta_init'])
 
     qf = DiscreteCNNQFunction(
         env_spec=env.spec,
