@@ -251,7 +251,7 @@ class EpisodeBatch(
                     'of length {}, but got key {} with batch size {} instead.'.
                     format(len(lengths), key, val.shape[0]))
 
-        return super().__new__(EpisodeBatch, episode_infos, env_spec,
+        return super().__new__(EpisodeBatch, env_spec, episode_infos,
                                observations, last_observations, actions,
                                rewards, env_infos, agent_infos, step_types,
                                lengths)
@@ -318,8 +318,8 @@ class EpisodeBatch(
         for i, length in enumerate(self.lengths):
             stop = start + length
             eps = EpisodeBatch(
-                episode_infos=slice_nested_dict(self.episode_infos, i, i + 1),
                 env_spec=self.env_spec,
+                episode_infos=slice_nested_dict(self.episode_infos, i, i + 1),
                 observations=self.observations[start:stop],
                 last_observations=np.asarray([self.last_observations[i]]),
                 actions=self.actions[start:stop],
@@ -667,7 +667,7 @@ class StepType(enum.IntEnum):
 
 class TimeStep(
         collections.namedtuple('TimeStep', [
-            'episode_info', 'env_spec', 'observation', 'action', 'reward',
+            'env_spec', 'episode_info', 'observation', 'action', 'reward',
             'next_observation', 'env_info', 'agent_info', 'step_type'
         ])):
     # pylint: disable=missing-return-doc, missing-return-type-doc, missing-param-doc, missing-type-doc  # noqa: E501
@@ -678,12 +678,12 @@ class TimeStep(
         tuple that characterizes the evolution of a MDP.
 
     Attributes:
+        env_spec (EnvSpec): Specification for the environment from which this
+            data was sampled.
         episode_info (dict[str, np.ndarray]): A dict of numpy arrays of shape
             :math:`(S*^,)` containing episode-level information of each
             episode.  For example, in goal-conditioned reinforcement learning
             this could contain the goal state for each episode.
-        env_spec (EnvSpec): Specification for the environment from which this
-            data was sampled.
         observation (numpy.ndarray): A numpy array of shape :math:`(O^*)`
             containing the observation for this time step in the
             environment. These must conform to
@@ -759,8 +759,8 @@ class TimeStep(
             TimeStep: The TimeStep with all information of EnvStep plus the
             agent info.
         """
-        return cls(episode_info=episode_info,
-                   env_spec=env_step.env_spec,
+        return cls(env_spec=env_step.env_spec,
+                   episode_info=episode_info,
                    observation=last_observation,
                    action=env_step.action,
                    reward=env_step.reward,
@@ -806,7 +806,7 @@ class InOutSpec:
 
 class TimeStepBatch(
         collections.namedtuple('TimeStepBatch', [
-            'episode_infos', 'env_spec', 'observations', 'actions', 'rewards',
+            'env_spec', 'episode_infos', 'observations', 'actions', 'rewards',
             'next_observations', 'env_infos', 'agent_infos', 'step_types'
         ])):
     # pylint: disable=missing-param-doc, missing-type-doc
@@ -815,13 +815,13 @@ class TimeStepBatch(
     Data type for off-policy algorithms, imitation learning and batch-RL.
 
     Attributes:
+        env_spec (EnvSpec): Specification for the environment from
+            which this data was sampled.
         episode_infos (dict[str, np.ndarray]): A dict of numpy arrays
             containing the episode-level information of each episode. Each
             value of this dict should be a numpy array of shape :math:`(N,
             S^*)`. For example, in goal-conditioned reinforcement learning this
             could contain the goal state for each episode.
-        env_spec (EnvSpec): Specification for the environment from
-            which this data was sampled.
         observations (numpy.ndarray): Non-flattened array of observations.
             Typically has shape (batch_size, S^*) (the unflattened state space
             of the current environment).
@@ -847,7 +847,7 @@ class TimeStepBatch(
     """
     __slots__ = ()
 
-    def __new__(cls, episode_infos, env_spec, observations, actions, rewards,
+    def __new__(cls, env_spec, episode_infos, observations, actions, rewards,
                 next_observations, env_infos, agent_infos,
                 step_types):  # noqa: D102
         # pylint: disable=missing-return-doc, missing-return-type-doc,
@@ -1000,7 +1000,7 @@ class TimeStepBatch(
                     'length {}, but got key {} with batch size {} instead.'.
                     format(inferred_batch_size, key, val.shape[0]))
 
-        return super().__new__(TimeStepBatch, episode_infos, env_spec,
+        return super().__new__(TimeStepBatch, env_spec, episode_infos,
                                observations, actions, rewards,
                                next_observations, env_infos, agent_infos,
                                step_types)
@@ -1036,8 +1036,8 @@ class TimeStepBatch(
         }
 
         return cls(
-            episode_infos=episode_infos,
             env_spec=batches[0].env_spec,
+            episode_infos=episode_infos,
             observations=np.concatenate(
                 [batch.observations for batch in batches]),
             actions=np.concatenate([batch.actions for batch in batches]),
