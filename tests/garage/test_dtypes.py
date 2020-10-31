@@ -462,8 +462,8 @@ def batch_data():
     episode_infos['prev_action'] = act
 
     return {
-        'episode_infos': episode_infos,
         'env_spec': env_spec,
+        'episode_infos': episode_infos,
         'observations': obs,
         'next_observations': next_obs,
         'actions': act,
