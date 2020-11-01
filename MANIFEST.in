@@ -22,6 +22,8 @@ graft docker
 graft examples
 graft scripts
 
+graft src/garage/examples
+
 # ignored files
 global-exclude *.py[co]
 global-exclude .DS_Store

@@ -35,6 +35,31 @@ getting started instructions and detailed APIs.
 pip install --user garage
 ```
 
+## Examples
+
+Starting from version v2020.10.0, garage comes packaged with examples. To get a
+list of examples, run
+
+```
+garage examples
+```
+
+To get the source of an example, run
+
+```
+garage examples tf/dqn_cartpole.py
+```
+
+This will print the source on your console, which you can write to a file as
+follows:
+
+```
+garage examples tf/dqn_cartpole.py > tf_dqn_cartpole.py
+```
+
+You can also access the examples for a specific version on GitHub by visiting
+the tag corresponding to that version.
+
 ## Join the Community
 
 **Join the [garage-announce mailing list](https://groups.google.com/forum/#!forum/garage-announce/join)**
