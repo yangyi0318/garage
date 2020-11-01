@@ -495,6 +495,7 @@ class RL2(MetaRLAlgorithm, abc.ABC):
 
         return EpisodeBatch(
             env_spec=episode_list[0].env_spec,
+            episode_infos=episode_infos,
             observations=np.concatenate(
                 [ep.observations for ep in episode_list]),
             last_observations=episode_list[-1].last_observations,
@@ -502,7 +503,6 @@ class RL2(MetaRLAlgorithm, abc.ABC):
             rewards=np.concatenate([ep.rewards for ep in episode_list]),
             env_infos=env_infos,
             agent_infos=agent_infos,
-            episode_infos=episode_infos,
             step_types=np.concatenate([ep.step_types for ep in episode_list]),
             lengths=np.asarray([sum([ep.lengths[0] for ep in episode_list])]))
 

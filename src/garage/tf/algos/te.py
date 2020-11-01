@@ -138,6 +138,7 @@ class TaskEmbeddingWorker(DefaultWorker):
         self._lengths = []
 
         return EpisodeBatch(env_spec=self.env.spec,
+                            episode_infos=episode_infos,
                             observations=np.asarray(observations),
                             last_observations=np.asarray(last_observations),
                             actions=np.asarray(actions),
@@ -145,5 +146,4 @@ class TaskEmbeddingWorker(DefaultWorker):
                             step_types=np.asarray(step_types, dtype=StepType),
                             env_infos=(env_infos),
                             agent_infos=dict(agent_infos),
-                            episode_infos=episode_infos,
                             lengths=np.asarray(lengths, dtype='i'))

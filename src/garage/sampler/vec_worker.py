@@ -150,6 +150,7 @@ class VecWorker(DefaultWorker):
             episode_infos[k] = np.asarray(v)
         eps = EpisodeBatch(
             env_spec=self._envs[episode_number].spec,
+            episode_infos=dict(episode_infos),
             observations=np.asarray(self._observations[episode_number]),
             last_observations=np.asarray([last_observation]),
             actions=np.asarray(self._actions[episode_number]),
@@ -158,7 +159,6 @@ class VecWorker(DefaultWorker):
                                   dtype=StepType),
             env_infos=dict(env_infos),
             agent_infos=dict(agent_infos),
-            episode_infos=dict(episode_infos),
             lengths=np.asarray([self._episode_lengths[episode_number]],
                                dtype='l'))
 

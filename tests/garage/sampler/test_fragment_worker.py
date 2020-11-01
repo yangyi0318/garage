@@ -64,6 +64,7 @@ def slice_episodes(episodes, slice_size):
             last_obs = np.asarray([next_obs[indices[-1]]])
             t = EpisodeBatch(
                 env_spec=eps.env_spec,
+                episode_infos={},
                 observations=eps.observations[indices],
                 last_observations=last_obs,
                 actions=eps.actions[indices],
@@ -75,7 +76,6 @@ def slice_episodes(episodes, slice_size):
                     k: v[indices]
                     for (k, v) in eps.agent_infos.items()
                 },
-                episode_infos={},
                 lengths=np.asarray([len(indices)], dtype='l'))
             sliced.append(t)
     return sliced

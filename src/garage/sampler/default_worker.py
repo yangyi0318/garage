@@ -163,6 +163,7 @@ class DefaultWorker(Worker):
         lengths = self._lengths
         self._lengths = []
         return EpisodeBatch(env_spec=self.env.spec,
+                            episode_infos=episode_infos,
                             observations=np.asarray(observations),
                             last_observations=np.asarray(last_observations),
                             actions=np.asarray(actions),
@@ -170,8 +171,7 @@ class DefaultWorker(Worker):
                             step_types=np.asarray(step_types, dtype=StepType),
                             env_infos=dict(env_infos),
                             agent_infos=dict(agent_infos),
-                            lengths=np.asarray(lengths, dtype='i'),
-                            episode_infos=episode_infos)
+                            lengths=np.asarray(lengths, dtype='i'))
 
     def rollout(self):
         """Sample a single episode of the agent in the environment.
